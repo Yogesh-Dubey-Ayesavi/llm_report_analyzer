@@ -1,0 +1,11 @@
+langchain
+python-dotenv
+supabase 
+streamlit
+openai
+psycopg2
+PyPDF2
+pandas
+tiktoken
+mailersend
+pdfreader
