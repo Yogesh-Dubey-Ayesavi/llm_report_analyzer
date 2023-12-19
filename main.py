@@ -1,8 +1,11 @@
 import json
 import os
-# from report_analyzer import 
+
 from dotenv import load_dotenv
 from flask import Flask, request
+
+from report_analyzer import getAnalysisReport, getFileNameOnReportId
+from response_model import ResponseModel
 
 app = Flask(__name__)
 load_dotenv()
@@ -33,11 +36,18 @@ def apiHandler():
        if "apiKey" in request.headers and request.headers.get("apiKey") ==  os.getenv("API_KEY"):
            if "report_id" in request.args :
                report_id = request.args.get("report_id")
-                
+               fileName  = getFileNameOnReportId(report_id)
+               dirName = request.args.get("dir")
+               model:ResponseModel = getAnalysisReport(fileName,dirName)
+               return {
+                'lacking_areas':model.lacking_areas,
+                'reward':model.reward,
+                'improving_areas': model.improving_areas
+               },200,headers
            else :
                return "Invalid request",400,headers
        else : 
-           return "Access Forbidden",403,headers    
+           return "Access Forbidden",403,headers        
     except Exception as e:
         print(e)
         return "An error Occured",500,headers

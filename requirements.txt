@@ -3,6 +3,7 @@ python-dotenv
 supabase 
 streamlit
 openai
+requests
 psycopg2
 PyPDF2
 pandas
