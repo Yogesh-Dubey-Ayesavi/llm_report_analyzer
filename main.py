@@ -4,16 +4,18 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, request
 
-from report_analyzer import getAnalysisReport, getFileNameOnReportId
+from keys import SUPABASE_CLIENT
+from report_analyzer import getAnalysisReport
 from response_model import ResponseModel
 
 app = Flask(__name__)
 load_dotenv()
 
 
-
 @app.route('/api', methods=['POST'])
 def apiHandler():
+
+
     if request.method == 'OPTIONS':
         # Allows GET requests from any origin with the Content-Type
         # header and caches preflight response for an 3600s
@@ -31,23 +33,17 @@ def apiHandler():
         'Access-Control-Allow-Methods': 'POST',
         'Access-Control-Allow-Origin': '*'
     }
-    
     try:
-       if "apiKey" in request.headers and request.headers.get("apiKey") ==  os.getenv("API_KEY"):
-           if "report_id" in request.args :
-               report_id = request.args.get("report_id")
-               fileName  = getFileNameOnReportId(report_id)
-               dirName = request.args.get("dir")
-               model:ResponseModel = getAnalysisReport(fileName,dirName)
-               return {
-                'lacking_areas':model.lacking_areas,
-                'reward':model.reward,
-                'improving_areas': model.improving_areas
-               },200,headers
+    #    if "apiKey" in request.headers and request.headers.get("apiKey") ==  os.getenv("API_KEY"):
+           json = request.get_json();
+           data = None
+           if "data" in json:
+               data = json.get('data')
+               return getAnalysisReport(data).markdownContent ,200,headers
            else :
                return "Invalid request",400,headers
-       else : 
-           return "Access Forbidden",403,headers        
+    #    else : 
+    #        return "Access Forbidden",403,headers        
     except Exception as e:
         print(e)
         return "An error Occured",500,headers

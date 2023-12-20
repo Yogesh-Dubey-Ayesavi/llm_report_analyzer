@@ -10,3 +10,5 @@ pandas
 tiktoken
 mailersend
 pdfreader
+pdfkit
+markdown
